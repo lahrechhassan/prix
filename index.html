@@ -1,0 +1,448 @@
+<html>
+  <head>
+  <base href="https://android.transport.app/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Répertoire de Prix de Transport</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color:orange;
+    }
+    .app-container {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: grey;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      color: #4285f4;
+      text-align: center;
+    }
+    .search-filter {
+      background-color: #e8f0fe;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .search-filter h3 {
+      margin-top: 0;
+      color: orange;
+    }
+    .filter-grid, .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+    }
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .filter-item input,
+    .filter-item select,
+    .filter-item button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid orange;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    button {
+      background-color: orange;
+      color: black;
+      border: none;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: greenyellow;
+    }
+    h2 {
+      margin-top: 30px;
+    }
+    #priceTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    #priceTable th, #priceTable td {
+      border: 1px solid #dadce0;
+      padding: 10px;
+      text-align: left;
+    }
+    #priceTable th {
+      background-color: #f1f3f4;
+      font-weight: bold;
+    }
+    #priceTable tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+    .modify-btn {
+      background-color: #fbbc05;
+    }
+    .delete-btn {
+      background-color: #ea4335;
+    }
+    /* Add responsive styles */
+    @media screen and (max-width: 768px) {
+      .app-container {
+        padding: 10px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      h2 {
+        font-size: 20px;
+      }
+      
+      #priceTable {
+        font-size: 14px;
+      }
+      
+      #priceTable th, #priceTable td {
+        padding: 8px;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .action-buttons button {
+        margin-bottom: 5px;
+      }
+    }
+    
+    @media screen and (max-width: 480px) {
+      h1 {
+        font-size: 20px;
+      }
+      
+      h2 {
+        font-size: 18px;
+      }
+      
+      .filter-item input,
+      .filter-item select,
+      .filter-item button,
+      .form-item input,
+      .form-item select,
+      .form-item button {
+        font-size: 14px;
+      }
+      
+      #priceTable {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <h1>TransportPrix</h1>
+    
+    <div class="search-filter">
+      <h3>Recherche et Filtre</h3>
+      <div class="filter-grid">
+        <div class="filter-item">
+          <input type="text" id="searchInput" placeholder="Rechercher...">
+        </div>
+        <div class="filter-item">
+          <select id="filterClient">
+            <option value="">Tous les clients</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select id="filterAxe">
+            <option value="">Tous les axes</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select id="filterMarchandise">
+            <option value="">Toutes les marchandises</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select id="filterPoids">
+            <option value="">Tous les paliers de poids</option>
+            <option value="2e Tranche">2e Tranche</option>
+            <option value="3e Tranche">3e Tranche</option>
+            <option value="4e Tranche">4e Tranche</option>
+            <option value="5e Tranche">5e Tranche</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <button id="applyFiltersBtn">Appliquer les filtres</button>
+        </div>
+      </div>
+    </div>
+
+    <h2>Ajouter un prix de transport</h2>
+    <form id="transportForm">
+      <div class="form-grid">
+        <div class="form-item">
+          <label for="client">Client:</label>
+          <div class="input-container">
+            <select id="client" required>
+              <option value="">Sélectionnez un client</option>
+            </select>
+            <button type="button" id="addClientBtn">+</button>
+          </div>
+        </div>
+        
+        <div class="form-item">
+          <label for="axe">Axe de Transport:</label>
+          <div class="input-container">
+            <select id="axe" required>
+              <option value="">Sélectionnez un axe</option>
+            </select>
+            <button type="button" id="addAxeBtn">+</button>
+          </div>
+        </div>
+        
+        <div class="form-item">
+          <label for="marchandise">Marchandise:</label>
+          <div class="input-container">
+            <select id="marchandise" required>
+              <option value="">Sélectionnez une marchandise</option>
+            </select>
+            <button type="button" id="addMarchandiseBtn">+</button>
+          </div>
+        </div>
+        
+        <div class="form-item">
+          <label for="poids">Palier de Poids (kg):</label>
+          <select id="poids" required>
+            <option value="">Sélectionnez un palier</option>
+            <option value="2e Tranche">2e Tranche</option>
+            <option value="3e Tranche">3e Tranche</option>
+            <option value="4e Tranche">4e Tranche</option>
+            <option value="5e Tranche">5e Tranche</option>
+          </select>
+        </div>
+        
+        <div class="form-item">
+          <label for="prix">Prix (€):</label>
+          <input type="number" id="prix" step="0.01" required>
+        </div>
+        
+        <div class="form-item">
+          <button type="submit" id="submitBtn">Ajouter Prix</button>
+        </div>
+      </div>
+    </form>
+    
+    <table id="priceTable">
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Axe de Transport</th>
+          <th>Marchandise</th>
+          <th>Palier de Poids (kg)</th>
+          <th>Prix (€)</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="priceTableBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const transportForm = document.getElementById('transportForm');
+    const clientSelect = document.getElementById('client');
+    const addClientBtn = document.getElementById('addClientBtn');
+    const axeSelect = document.getElementById('axe');
+    const addAxeBtn = document.getElementById('addAxeBtn');
+    const marchandiseSelect = document.getElementById('marchandise');
+    const addMarchandiseBtn = document.getElementById('addMarchandiseBtn');
+    const priceTableBody = document.getElementById('priceTableBody');
+    const submitBtn = document.getElementById('submitBtn');
+    const searchInput = document.getElementById('searchInput');
+    const filterClient = document.getElementById('filterClient');
+    const filterAxe = document.getElementById('filterAxe');
+    const filterMarchandise = document.getElementById('filterMarchandise');
+    const filterPoids = document.getElementById('filterPoids');
+    let prices = [];
+    let clients = ['Client A', 'Client B', 'Client C'];
+    let axes = ['Paris-Lyon', 'Marseille-Bordeaux', 'Lille-Strasbourg'];
+    let marchandises = ['Fruits', 'Légumes', 'Électronique'];
+    let editingIndex = -1;
+
+    function updateClientList() {
+      clientSelect.innerHTML = '<option value="">Sélectionnez un client</option>';
+      filterClient.innerHTML = '<option value="">Tous les clients</option>';
+      clients.forEach(client => {
+        const option1 = document.createElement('option');
+        option1.value = client;
+        option1.textContent = client;
+        clientSelect.appendChild(option1);
+        
+        const option2 = option1.cloneNode(true);
+        filterClient.appendChild(option2);
+      });
+    }
+
+    function updateAxeList() {
+      axeSelect.innerHTML = '<option value="">Sélectionnez un axe</option>';
+      filterAxe.innerHTML = '<option value="">Tous les axes</option>';
+      axes.forEach(axe => {
+        const option1 = document.createElement('option');
+        option1.value = axe;
+        option1.textContent = axe;
+        axeSelect.appendChild(option1);
+        
+        const option2 = option1.cloneNode(true);
+        filterAxe.appendChild(option2);
+      });
+    }
+
+    function updateMarchandiseList() {
+      marchandiseSelect.innerHTML = '<option value="">Sélectionnez une marchandise</option>';
+      filterMarchandise.innerHTML = '<option value="">Toutes les marchandises</option>';
+      marchandises.forEach(marchandise => {
+        const option1 = document.createElement('option');
+        option1.value = marchandise;
+        option1.textContent = marchandise;
+        marchandiseSelect.appendChild(option1);
+        
+        const option2 = option1.cloneNode(true);
+        filterMarchandise.appendChild(option2);
+      });
+    }
+
+    updateClientList();
+    updateAxeList();
+    updateMarchandiseList();
+
+    addClientBtn.addEventListener('click', function() {
+      const newClient = prompt("Entrez le nom du nouveau client:");
+      if (newClient && !clients.includes(newClient)) {
+        clients.push(newClient);
+        updateClientList();
+        alert(`Nouveau client "${newClient}" ajouté avec succès!`);
+      } else if (clients.includes(newClient)) {
+        alert("Ce client existe déjà!");
+      }
+    });
+
+    addAxeBtn.addEventListener('click', function() {
+      const newAxe = prompt("Entrez un nouvel axe de transport:");
+      if (newAxe && !axes.includes(newAxe)) {
+        axes.push(newAxe);
+        updateAxeList();
+        alert(`Nouvel axe "${newAxe}" ajouté avec succès!`);
+      } else if (axes.includes(newAxe)) {
+        alert("Cet axe existe déjà!");
+      }
+    });
+
+    addMarchandiseBtn.addEventListener('click', function() {
+      const newMarchandise = prompt("Entrez une nouvelle marchandise:");
+      if (newMarchandise && !marchandises.includes(newMarchandise)) {
+        marchandises.push(newMarchandise);
+        updateMarchandiseList();
+        alert(`Nouvelle marchandise "${newMarchandise}" ajoutée avec succès!`);
+      } else if (marchandises.includes(newMarchandise)) {
+        alert("Cette marchandise existe déjà!");
+      }
+    });
+
+    transportForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const client = clientSelect.value;
+      const axe = axeSelect.value;
+      const marchandise = marchandiseSelect.value;
+      const poids = document.getElementById('poids').value;
+      const prix = document.getElementById('prix').value;
+      
+      if (editingIndex === -1) {
+        const newPrice = { client, axe, marchandise, poids, prix };
+        prices.push(newPrice);
+      } else {
+        prices[editingIndex] = { client, axe, marchandise, poids, prix };
+        editingIndex = -1;
+        submitBtn.textContent = "Ajouter Prix";
+      }
+      
+      updatePriceTable();
+      transportForm.reset();
+    });
+
+    function updatePriceTable(filteredPrices = prices) {
+      priceTableBody.innerHTML = '';
+      filteredPrices.forEach((price, index) => {
+        const row = priceTableBody.insertRow();
+        row.innerHTML = `
+          <td>${price.client}</td>
+          <td>${price.axe}</td>
+          <td>${price.marchandise}</td>
+          <td>${price.poids}</td>
+          <td>${price.prix}</td>
+          <td class="action-buttons">
+            <button class="modify-btn" onclick="modifyPrice(${index})">Modifier</button>
+            <button class="delete-btn" onclick="deletePrice(${index})">Supprimer</button>
+          </td>
+        `;
+      });
+    }
+
+    function modifyPrice(index) {
+      const price = prices[index];
+      clientSelect.value = price.client;
+      axeSelect.value = price.axe;
+      marchandiseSelect.value = price.marchandise;
+      document.getElementById('poids').value = price.poids;
+      document.getElementById('prix').value = price.prix;
+      editingIndex = index;
+      submitBtn.textContent = "Modifier Prix";
+    }
+
+    function deletePrice(index) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer ce prix ?")) {
+        prices.splice(index, 1);
+        updatePriceTable();
+      }
+    }
+
+    function applyFilters() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const clientFilter = filterClient.value;
+      const axeFilter = filterAxe.value;
+      const marchandiseFilter = filterMarchandise.value;
+      const poidsFilter = filterPoids.value;
+
+      const filteredPrices = prices.filter(price => {
+        const matchSearch = Object.values(price).some(value => 
+          value.toString().toLowerCase().includes(searchTerm)
+        );
+        const matchClient = !clientFilter || price.client === clientFilter;
+        const matchAxe = !axeFilter || price.axe === axeFilter;
+        const matchMarchandise = !marchandiseFilter || price.marchandise === marchandiseFilter;
+        const matchPoids = !poidsFilter || price.poids === poidsFilter;
+
+        return matchSearch && matchClient && matchAxe && matchMarchandise && matchPoids;
+      });
+
+      updatePriceTable(filteredPrices);
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    filterClient.addEventListener('change', applyFilters);
+    filterAxe.addEventListener('change', applyFilters);
+    filterMarchandise.addEventListener('change', applyFilters);
+    filterPoids.addEventListener('change', applyFilters);
+    document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
+  </script>
+</body></html>
